@@ -1,0 +1,36 @@
+{
+  "name": "kimlikdogrulama",
+  "version": "1.0.0",
+  "description": "Basit Kimlik Dogrulama",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdullahilkeruguducu/kimlikDogrulamaTask.git"
+  },
+  "keywords": [
+    "login",
+    "register"
+  ],
+  "author": "Ilker Uguducu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdullahilkeruguducu/kimlikDogrulamaTask/issues"
+  },
+  "homepage": "https://github.com/abdullahilkeruguducu/kimlikDogrulamaTask#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "prettier": "2.8.8"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+    "mongodb": "^5.7.0",
+    "mongoose": "^7.3.1"
+  }
+}
