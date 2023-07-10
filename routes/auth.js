@@ -43,9 +43,11 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, "secretkey");
+    const role = user.role;
 
-    res.json({ token });
+    const token = jwt.sign({ userId: user._id, role: user.role }, "secretkey");
+
+    res.json({ token, role });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -56,7 +58,7 @@ router.get("/private", authenticateToken, (req, res) => {
 });
 
 router.get("/admin", authenticateToken, (req, res) => {
-  if (req.body.role === "admin") {
+  if (req.user.role === "admin") {
     res.json({ message: "Admin endpointine hoş geldiniz!" });
   } else {
     res.status(403).json({ error: "Bu endpointe erişim izniniz yok." });
