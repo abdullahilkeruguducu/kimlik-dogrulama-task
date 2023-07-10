@@ -54,14 +54,14 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/private", authenticateToken, (req, res) => {
-  res.json({ message: "Private endpointine hoş geldiniz!" });
+  res.json({ message: "Private authorized endpoint!" });
 });
 
 router.get("/admin", authenticateToken, (req, res) => {
   if (req.user.role === "admin") {
-    res.json({ message: "Admin endpointine hoş geldiniz!" });
+    res.json({ message: "Admin authorized endpoint!" });
   } else {
-    res.status(403).json({ error: "Bu endpointe erişim izniniz yok." });
+    res.status(403).json({ error: "You do not have permission to access this endpoint." });
   }
 });
 
