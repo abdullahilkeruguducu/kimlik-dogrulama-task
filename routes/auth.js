@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const authenticateToken = require("../middleware/authToken");
 
 const router = express.Router();
 
@@ -48,21 +49,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-const authenticateToken = (req, res, next) => {
-  const token = req.headers["authorization"].split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Token not found." });
-  }
-
-  jwt.verify(token, "secretkey", (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "Invalid token." });
-    }
-    req.user = user;
-    next();
-  });
-};
 
 router.get("/profile", authenticateToken, (req, res) => {
   res.json({ message: "This is an authorized endpoint." });
