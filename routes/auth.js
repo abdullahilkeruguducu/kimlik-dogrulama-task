@@ -1,11 +1,11 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: 'This username is already in use.' });
+        .json({ message: "This username is already in use." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,27 +21,27 @@ router.post('/register', async (req, res) => {
     const user = new User({ username, password: hashedPassword });
     await user.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: "Invalid username or password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, 'secretkey');
+    const token = jwt.sign({ userId: user._id }, "secretkey");
 
     res.json({ token });
   } catch (err) {
@@ -50,22 +50,22 @@ router.post('/login', async (req, res) => {
 });
 
 const authenticateToken = (req, res, next) => {
-  const token = req.headers['authorization'];
+  const token = req.headers["authorization"].split(" ")[1];
   if (!token) {
-    return res.status(401).json({ message: 'Token not found.' });
+    return res.status(401).json({ message: "Token not found." });
   }
 
-  jwt.verify(token, 'secretkey', (err, user) => {
+  jwt.verify(token, "secretkey", (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid token.' });
+      return res.status(403).json({ message: "Invalid token." });
     }
     req.user = user;
     next();
   });
 };
 
-router.get('/profile', authenticateToken, (req, res) => {
-  res.json({ message: 'This is an authorized endpoint.' });
+router.get("/profile", authenticateToken, (req, res) => {
+  res.json({ message: "This is an authorized endpoint." });
 });
 
 module.exports = router;
