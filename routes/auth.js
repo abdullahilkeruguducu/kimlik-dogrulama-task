@@ -2,13 +2,14 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const authenticateToken = require("../middleware/authToken");
+const authenticateToken = require("../middleware/authenticateToken");
 
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
+    const role = req.body.role;
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -19,7 +20,7 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, role: role });
     await user.save();
 
     res.status(201).json({ message: "User registered successfully" });
@@ -47,6 +48,18 @@ router.post("/login", async (req, res) => {
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/private", authenticateToken, (req, res) => {
+  res.json({ message: "Private endpointine hoş geldiniz!" });
+});
+
+router.get("/admin", authenticateToken, (req, res) => {
+  if (req.body.role === "admin") {
+    res.json({ message: "Admin endpointine hoş geldiniz!" });
+  } else {
+    res.status(403).json({ error: "Bu endpointe erişim izniniz yok." });
   }
 });
 
